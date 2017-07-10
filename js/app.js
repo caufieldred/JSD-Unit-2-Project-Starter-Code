@@ -1,23 +1,29 @@
 /*
   Please add all Javascript code to this file.
 */
-var mashableURL = 'https://accesscontrolalloworiginall.herokuapp.com/http://mashable.com/stories.json';
-var diggURL = 'https://accesscontrolalloworiginall.herokuapp.com/http://digg.com/api/news/popular.json';
-var redditURL = 'https://accesscontrolalloworiginall.herokuapp.com/https://www.reddit.com/top.json';
+var config = {
+    urls: {
+        mashable: 'https://accesscontrolalloworiginall.herokuapp.com/http://mashable.com/stories.json',
+        digg: 'https://accesscontrolalloworiginall.herokuapp.com/http://digg.com/api/news/popular.json',
+        reddit: 'https://accesscontrolalloworiginall.herokuapp.com/https://www.reddit.com/top.json'
+    },
+    newsSource: ''
+}
 
 $(function() {
     $('li.feed-type').on('click',function(){
-    //set a function to capture the feedname and input it into the li span called "source-name"
-    var content = $(this).text();
-    $('#source-name').html(content);
+        //set a function to capture the feedname and input it into the li span called "source-name"
+        var content = $(this).text();
+        var contentButton = $('#source-name').html(content);
+        config.newsSource = content.toLowerCase();
     });
 
     $('#search').on('click',function(){
         //when the search button is clicked, perform the ajax call to populate with data
         $.ajax({
             method:"GET",
-            //HELP if test here to see if we can get the value selected from the dropdown and then switch out the URL variable
-            url: mashableURL,
+            //url: config.urls[config.newsSource], 
+            url: config.urls[config.newsSource],
         }).done(function(data){
             // HELP if statement for the various functions here
             getFeedControllerMashable(data);
@@ -35,6 +41,7 @@ $(function() {
     
     //Digg Template Function
     function getFeedControllerDigg(data){
+        console.log(data);
         var theScriptHTML = $("#articleListTemplateDigg")[0].innerHTML;
         var theTemplate = Handlebars.compile(theScriptHTML);
         var contextObj = theTemplate(data.feed);
